@@ -3,10 +3,10 @@ sequenceDiagram
     participant browser
     participant server
 
-    browser->>server: POST https://studies.cs.helsinki.fi/exampleapp/new_note\nnote=Hello
+    browser->>server: POST https://studies.cs.helsinki.fi/exampleapp/new_note
     Note right of browser: The browser sends the form data (note=Hello) to the server.
     activate server
-    server-->>browser: 302 Found\nLocation: /exampleapp/notes
+    server-->>browser: 302 Found Location: /exampleapp/notes
     Note right of server: The server stores the note and then redirects the browser to /exampleapp/notes
     deactivate server
     
