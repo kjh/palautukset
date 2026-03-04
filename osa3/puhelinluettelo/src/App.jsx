@@ -149,6 +149,17 @@ const App = () => {
           setNewName('')
           setNewNumber('')
         })
+        .catch(error => {
+          // pääset käsiksi palvelimen palauttamaan virheilmoitusolioon näin
+          console.log(error.response.data)
+          setNotificationMessage({
+            message: `${error.response.data.error}`,
+            type: "error"
+          })
+          setTimeout(() => {
+            setNotificationMessage({message: null, type: null})
+          }, 5000)
+        })
     }
   }
 
@@ -167,7 +178,7 @@ const App = () => {
           }, 5000)
           setPersons(persons.filter(person => person.id !== deletedPerson.id))
         })
-        .catch(error => {
+        .catch(() => {
           /*alert(
             `the person '${name}' was already deleted from server`
           )*/

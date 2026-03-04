@@ -1,6 +1,6 @@
 const express = require('express')
 const morgan = require('morgan')
-const mongoose = require('mongoose')
+//const mongoose = require('mongoose')
 require('dotenv').config()
 const Person = require('./models/person')
 
@@ -14,7 +14,7 @@ app.use(express.json())
 
 app.use(express.static('dist'))
 
-morgan.token('json_body', req => JSON.stringify(req.body));
+morgan.token('json_body', req => JSON.stringify(req.body))
 
 app.use(morgan(`${morgan['tiny']} :json_body`))
 
@@ -45,7 +45,6 @@ app.get('/api/persons/:id', (request, response, next) => {
 
   const id = request.params.id
   const person = persons.find(person => person.id === id)
-  
 
   if (person) {
     response.json(person)
@@ -59,7 +58,7 @@ app.get('/api/persons/:id', (request, response, next) => {
 app.delete('/api/persons/:id', (request, response, next) => {
   const id = request.params.id
 
-  Person.findByIdAndDelete(id).then(person => {
+  Person.findByIdAndDelete(id).then(() => {
     //response.json(person)
     // TODO persons = persons.filter(person => person.id !== id)
     response.status(204).end()
@@ -87,28 +86,28 @@ app.put('/api/persons/:id', (request, response, next) => {
     .catch(error => next(error))
 })
 
-const generateId = () => {
-  return String(Math.floor(Math.random() * 1_000_000))
-}
+//const generateId = () => {
+//  return String(Math.floor(Math.random() * 1_000_000))
+//}
 
 app.post('/api/persons', (request, response, next) => {
   const body = request.body
 
   if (!body.name) {
-    return response.status(400).json({ 
-      error: 'name missing' 
+    return response.status(400).json({
+      error: 'name missing'
     })
   }
 
   if (!body.number) {
-    return response.status(400).json({ 
-      error: 'number missing' 
+    return response.status(400).json({
+      error: 'number missing'
     })
   }
 
   if (persons.some(person => person.name === body.name)) {
-    return response.status(409).json({ 
-      error: 'name must be unique' 
+    return response.status(409).json({
+      error: 'name must be unique'
     })
   }
 
