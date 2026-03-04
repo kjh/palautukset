@@ -1,3 +1,4 @@
+```mermaid
 sequenceDiagram
     participant browser
     participant server
@@ -10,5 +11,5 @@ sequenceDiagram
     deactivate server
 
     Note right of browser: When note is added, it is first pushed to spa app variable and then notes are rendered and then the note is sent to server.
-    
+```
     
