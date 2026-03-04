@@ -168,20 +168,17 @@ const App = () => {
     if (window.confirm(`Delete ${name}?`)) {
       console.log('yes')
       personService
-        .deletePerson(id).then(deletedPerson => {
+        .deletePerson(id).then(() => {
           setNotificationMessage({
-            message: `Deleted '${deletedPerson.name}'`,
+            message: `Deleted '${name}'`,
             type: "success"
           })
           setTimeout(() => {
             setNotificationMessage({message: null, type: null})
           }, 5000)
-          setPersons(persons.filter(person => person.id !== deletedPerson.id))
+          setPersons(persons.filter(person => person.id !== id))
         })
         .catch(() => {
-          /*alert(
-            `the person '${name}' was already deleted from server`
-          )*/
           setNotificationMessage({
             message: `Information of '${name}' has already been removed from server`,
             type: "error"
