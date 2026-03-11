@@ -61,6 +61,7 @@ app.delete('/api/persons/:id', (request, response, next) => {
   Person.findByIdAndDelete(id).then(() => {
     //response.json(person)
     // TODO persons = persons.filter(person => person.id !== id)
+    persons = persons.filter(person => person.id !== id)
     response.status(204).end()
   }).catch(error => next(error))
 
