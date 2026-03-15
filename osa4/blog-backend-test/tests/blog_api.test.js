@@ -199,7 +199,7 @@ describe('when there is initially some blogs saved', () => {
             assert.strictEqual(addedBlog.likes, 0)
         })
 
-        test('blog without url is not added', async () => {
+        test('blog without url is not added and fails with statuscode 400', async () => {
             const newBlog = {
                 title: 'default values of missing fields',
                 author: 'Pekka Pouta',
@@ -234,7 +234,7 @@ describe('when there is initially some blogs saved', () => {
             assert.strictEqual(response.body.length, helper.initialBlogs.length)
         })
 
-        test('blog without title is not added', async () => {
+        test('blog without title is not added and fails with statuscode 400', async () => {
             const newBlog = {
                 author: 'Pekka Pouta',
                 url: 'http://lost.org',
