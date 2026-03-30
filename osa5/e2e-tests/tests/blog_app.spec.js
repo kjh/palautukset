@@ -156,7 +156,7 @@ describe('Blog app', () => {
             await expect(page.getByText('title str author str')).not.toBeVisible()
         })
 
-        test('blog remove button is not viewn if user is not creator', async ({ page }) => {
+        test('blog remove button is not shown if user is not creator', async ({ page }) => {
             await page.getByRole('button', { name: 'logout' }).click()
 
             await loginWith(page, 'heidit', 'salainen1')
