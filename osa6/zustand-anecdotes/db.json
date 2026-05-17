@@ -1,0 +1,90 @@
+{
+  "anecdotes": [
+    {
+      "id": "1",
+      "content": "If it hurts, do it more often",
+      "votes": 8
+    },
+    {
+      "id": "2",
+      "content": "Adding manpower to a late software project makes it later!",
+      "votes": 2
+    },
+    {
+      "id": "3",
+      "content": "The first 90 percent of the code accounts for the first 90 percent of the development time...The remaining 10 percent of the code accounts for the other 90 percent of the development time.",
+      "votes": 1
+    },
+    {
+      "id": "4",
+      "content": "Any fool can write code that a computer can understand. Good programmers write code that humans can understand.",
+      "votes": 1
+    },
+    {
+      "id": "5",
+      "content": "Premature optimization is the root of all evil.",
+      "votes": 1
+    },
+    {
+      "id": "6",
+      "content": "Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it.",
+      "votes": 1
+    },
+    {
+      "content": "est",
+      "votes": 1,
+      "id": "T-z7JdK4JUg"
+    },
+    {
+      "content": "okay",
+      "votes": 1,
+      "id": "jPsVthQ0Wcs"
+    },
+    {
+      "content": "",
+      "votes": 1,
+      "id": "K89DTgb3uzY"
+    },
+    {
+      "content": "",
+      "votes": 1,
+      "id": "UAA_Xt1117A"
+    },
+    {
+      "content": "1",
+      "votes": 1,
+      "id": "_hueeCWd5f8"
+    },
+    {
+      "content": "test",
+      "votes": 0,
+      "id": "dfZV09l_v_8"
+    },
+    {
+      "content": "okay",
+      "votes": 0,
+      "id": "ABpOFBnDzeg"
+    },
+    {
+      "content": "jee",
+      "votes": 0,
+      "id": "UiudyIPjP1s"
+    },
+    {
+      "content": "jee",
+      "votes": 0,
+      "id": "x8QbIaOeOB0"
+    },
+    {
+      "content": "ok",
+      "votes": 0,
+      "id": "9yGioxrmSMQ"
+    },
+    {
+      "content": "ok",
+      "votes": 0,
+      "id": "4p4GH4KoGR4"
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
+}
