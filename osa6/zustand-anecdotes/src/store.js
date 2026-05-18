@@ -38,12 +38,30 @@ const useAnecdoteStore = create((set, get) => ({
     add: async (content) => {
       const newAnecdote = await anecdoteService.createNew(content) // storeen
       set(
-        state => ({ 
+        state => ({
           anecdotes: state.anecdotes.concat(newAnecdote).toSorted((a, b) => b.votes - a.votes)
-         })
+        })
       )
       useNotificationStore.getState().actions.setNotification(
         `You added anecdote: "${newAnecdote.content}"`
+      )
+      setTimeout(() => useNotificationStore.getState().actions.setNotification(
+        null
+      ), 5000)
+    },
+    remove: async (id) => {
+      const anecdote = get().anecdotes.find(n => n.id === id)
+
+      if (!anecdote || anecdote.votes > 0) return
+
+      await anecdoteService.remove(anecdote.id)
+
+      set(state => ({
+        anecdotes: state.anecdotes.filter(a => a.id !== id)
+      }))
+
+      useNotificationStore.getState().actions.setNotification(
+        `Deleted ${anecdote.content} with ${anecdote.votes} votes`
       )
       setTimeout(() => useNotificationStore.getState().actions.setNotification(
         null
