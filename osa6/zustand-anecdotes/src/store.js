@@ -1,5 +1,6 @@
 
 import { create } from 'zustand'
+import { devtools } from 'zustand/middleware'
 import anecdoteService from './services/anecdotes'
 
 
@@ -20,14 +21,14 @@ const asObject = anecdote => ({
   votes: 0
 })
 
-const useNotificationStore = create((set, get) => ({
+const useNotificationStore = create(devtools((set, get) => ({//create((set, get) => ({
   notification: null,
   actions: {
     setNotification: value => set(() => ({ notification: value }))
   }
-}))
+})))
 
-const useAnecdoteStore = create((set, get) => ({
+const useAnecdoteStore = create(devtools((set, get) => ({//create((set, get) => ({
   filter: null,
   anecdotes: [],
   actions: {
@@ -89,7 +90,7 @@ const useAnecdoteStore = create((set, get) => ({
     },
     setFilter: value => set(() => ({ filter: value }))
   },
-}))
+})))
 
 export const useNotificationActions = () => useNotificationStore((state) => state.actions)
 export const useNotification = () => useNotificationStore((state) => state.notification)
@@ -97,10 +98,12 @@ export const useNotification = () => useNotificationStore((state) => state.notif
 export const useAnecdoteActions = () => useAnecdoteStore((state) => state.actions)
 export const useFilter = () => useAnecdoteStore((state) => state.filter)
 export const useAnecdotes = () => {
-  const anecdotes = useAnecdoteStore((state) => state.anecdotes)
+  const anecdotes = useAnecdoteStore((state) => state.anecdotes).toSorted((a, b) => b.votes - a.votes)
   const filter = useAnecdoteStore((state) => state.filter)
-  if (filter) return anecdotes.filter(a =>
-    a.content.toLowerCase().includes(filter.toLowerCase())
+  if (filter) return anecdotes.filter(anecdote =>
+    anecdote.content.toLowerCase().includes(filter.toLowerCase())
   )
   return anecdotes
 }
+
+export default useAnecdoteStore
