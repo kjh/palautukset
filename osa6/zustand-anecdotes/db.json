@@ -34,31 +34,6 @@
       "content": "est",
       "votes": 1,
       "id": "T-z7JdK4JUg"
-    },
-    {
-      "content": "okay",
-      "votes": 1,
-      "id": "jPsVthQ0Wcs"
-    },
-    {
-      "content": "",
-      "votes": 1,
-      "id": "K89DTgb3uzY"
-    },
-    {
-      "content": "",
-      "votes": 1,
-      "id": "UAA_Xt1117A"
-    },
-    {
-      "content": "1",
-      "votes": 3,
-      "id": "_hueeCWd5f8"
-    },
-    {
-      "content": "test",
-      "votes": 2,
-      "id": "dfZV09l_v_8"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

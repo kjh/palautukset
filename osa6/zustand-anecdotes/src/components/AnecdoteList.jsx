@@ -4,11 +4,6 @@ const AnecdoteList = () => {
   const anecdotes = useAnecdotes()
   const { vote, remove } = useAnecdoteActions()
 
-  /*const vote = id => {
-    actions.vote(id)
-    console.log('vote', id)
-  }*/
-
   return (
     <div>
       {anecdotes.map(anecdote => (
