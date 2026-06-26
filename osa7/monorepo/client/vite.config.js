@@ -1,5 +1,5 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -14,15 +14,15 @@ export default defineConfig({
   },*/
   server: {
     proxy: {
-      '/api': 'http://localhost:3003'
+      "/api": "http://localhost:3003",
     },
   },
   test: {
-    environment: 'jsdom',
+    environment: "jsdom",
     globals: true,
-    setupFiles: './testSetup.js',
-  }
-})
+    setupFiles: "./testSetup.js",
+  },
+});
 /*
 export default defineConfig({
   plugins: [react()],
