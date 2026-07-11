@@ -1,51 +1,62 @@
-import { useState } from "react";
+import { useField } from "../hooks";
+import styled from "styled-components";
 
-const BlogForm = ({ createBlog }) => {
-  const [newTitle, setNewTitle] = useState("");
-  const [newAuthor, setNewAuthor] = useState("");
-  const [newUrl, setNewUrl] = useState("");
+const Button = styled.button`
+  background: Bisque;
+  font-size: 1em;
+  margin: 1em;
+  padding: 0.25em 1em;
+  border: 2px solid Chocolate;
+  border-radius: 3px;
+`;
+
+const Input = styled.input`
+  margin: 0.25em;
+  width: 220px;
+`;
+
+const BlogForm = ({ user, createBlog }) => {
+  const title = useField("text");
+  const author = useField("text");
+  const url = useField("text");
+
+  if (!user) {
+    return null;
+  }
 
   const addBlog = (event) => {
     event.preventDefault();
     createBlog({
-      title: newTitle,
-      author: newAuthor,
-      url: newUrl,
+      title: title.inputProps.value,
+      author: author.inputProps.value,
+      url: url.inputProps.value,
     });
 
-    setNewTitle("");
-    setNewAuthor("");
-    setNewUrl("");
+    title.reset();
+    author.reset();
+    url.reset();
   };
+
   return (
     <div>
       <h3>Create new</h3>
       <form onSubmit={addBlog}>
         <label>
           Title:
-          <input
-            value={newTitle}
-            onChange={(event) => setNewTitle(event.target.value)}
-          />
+          <Input {...title.inputProps} />
         </label>
         <br />
         <label>
           Author:
-          <input
-            value={newAuthor}
-            onChange={(event) => setNewAuthor(event.target.value)}
-          />
+          <Input {...author.inputProps} />
         </label>
         <br />
         <label>
           Url:
-          <input
-            value={newUrl}
-            onChange={(event) => setNewUrl(event.target.value)}
-          />
+          <Input {...url.inputProps} />
         </label>
         <br />
-        <button type="submit">create</button>
+        <Button type="submit">create</Button>
       </form>
     </div>
   );

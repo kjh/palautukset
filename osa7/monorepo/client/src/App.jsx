@@ -1,215 +1,272 @@
+import {
+  Box,
+  Container,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  FormLabel,
+  FormControl,
+  TextField,
+  Button,
+} from "@mui/material";
 import { useState, useEffect, useRef } from "react";
 //import Footer from './components/Footer'
-import Blog from "./components/Blog";
+import SingleBlog from "./components/SingleBlog";
 import Notification from "./components/Notification";
 //import LoginForm from './components/LoginForm'
 //import NoteForm from './components/BlogForm'
 import Togglable from "./components/Togglable";
 import loginService from "./services/login";
 import blogService from "./services/blogs";
+
 import BlogForm from "./components/BlogForm";
 import ErrorBoundary from "./ErrorBoundary";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Link,
+  useMatch,
+} from "react-router-dom";
 import Menu from "./components/Menu";
 import NotFoundError from "./components/NotFoundError";
+import { useField } from "./hooks";
+
+import {
+  useBlogs,
+  useBlogActions,
+  useUser,
+  useUserActions,
+  useNotificationActions,
+  useAllUsers,
+} from "./store";
+import {
+  getUser as getPersistentUser,
+  saveUser as savePersistentUser,
+  removeUser as removePersistentUser,
+} from "./services/persistentUser";
 
 const App = () => {
-  const [blogs, setBlogs] = useState([]);
-  const [notificationMessage, setNotificationMessage] = useState({
-    message: null,
-    type: null,
-  });
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [user, setUser] = useState(null);
+  const { initialize, add, like, remove, comment } = useBlogActions();
+  const blogs = useBlogs();
 
-  const blogFormRef = useRef();
+  const { setUser, initUsers } = useUserActions();
+  const user = useUser();
+
+  const allUsers = useAllUsers();
+  const { setNotificationMessage } = useNotificationActions();
 
   useEffect(() => {
-    blogService.getAll().then((initialBlogs) => {
-      //initialBlogs.sort((a, b) => a.likes - b.likes)
-      //setBlogs(initialBlogs)
-      setBlogs(initialBlogs.sort((a, b) => a.likes - b.likes));
-    });
-  }, []);
+    initialize();
+  }, [initialize]);
 
   useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem("loggedBlogappUser");
-    if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON);
+    initUsers();
+  }, [initUsers]);
+
+  const username = useField("text");
+  const password = useField("password");
+
+  const match = useMatch("/users/:id");
+
+  const blogUser = match
+    ? allUsers.find((u) => u.id === match.params.id)
+    : null;
+
+  const matchBlog = useMatch("/blogs/:id");
+
+  const blog = matchBlog
+    ? blogs.find((blog) => blog.id === matchBlog.params.id)
+    : null;
+
+  useEffect(() => {
+    const user = getPersistentUser();
+    if (user) {
       setUser(user);
+      console.log("user from local storage", user);
       blogService.setToken(user.token);
     }
   }, []);
 
-  const addBlog = (blogObject) => {
-    blogFormRef.current.toggleVisibility();
-
-    blogService.create(blogObject).then((returnedBlog) => {
-      setBlogs(blogs.concat(returnedBlog).sort((a, b) => a.likes - b.likes));
-      setNotificationMessage({
-        message: `a new blog ${returnedBlog.title} by ${returnedBlog.author} added`,
-        type: "success",
-      });
-      setTimeout(() => {
-        setNotificationMessage({ message: null, type: null });
-      }, 5000);
-    });
+  const addBlog = async (blogObject) => {
+    await add(blogObject);
   };
 
-  const updateBlog = (blogObject) => {
-    blogService.update(blogObject).then((returnedBlog) => {
-      setBlogs(
-        blogs
-          .map((blog) => (blog.id === returnedBlog.id ? returnedBlog : blog))
-          .sort((a, b) => a.likes - b.likes),
-      );
-      setNotificationMessage({
-        message: `a new blog ${returnedBlog.title} by ${returnedBlog.author} updated`,
-        type: "success",
-      });
-      setTimeout(() => {
-        setNotificationMessage({ message: null, type: null });
-      }, 5000);
-    });
+  const updateBlog = async (blogObject) => {
+    console.log("update:", blogObject);
+    await like(blogObject.id);
   };
 
-  const deleteBlog = (blogObject) => {
-    if (
-      window.confirm(`Remove blog ${blogObject.title} by ${blogObject.author}?`)
-    ) {
-      blogService.remove(blogObject).then(() => {
-        setBlogs(blogs.filter((b) => b.id !== blogObject.id));
-        setNotificationMessage({
-          message: `blog ${blogObject.title} by ${blogObject.author} deleted`,
-          type: "success",
-        });
-        setTimeout(() => {
-          setNotificationMessage({ message: null, type: null });
-        }, 5000);
-      });
-    }
+  const deleteBlog = async (blogObject) => {
+    await remove(blogObject.id);
+  };
+
+  const commentBlog = async (id, text) => {
+    await comment(id, text);
   };
 
   const handleLogin = async (event) => {
     event.preventDefault();
 
     try {
-      const user = await loginService.login({ username, password });
-
-      window.localStorage.setItem("loggedBlogappUser", JSON.stringify(user));
-
+      const user = await loginService.login({
+        username: username.inputProps.value,
+        password: password.inputProps.value,
+      });
+      console.log("user from login service", user);
+      savePersistentUser(user);
       blogService.setToken(user.token);
       setUser(user);
-      setUsername("");
-      setPassword("");
+      username.reset();
+      password.reset();
     } catch {
-      setNotificationMessage({
-        message: "wrong username or password",
-        type: "error",
-      });
+      setNotificationMessage("wrong username or password", "error");
       setTimeout(() => {
-        setNotificationMessage({ message: null, type: null });
+        setNotificationMessage(null);
       }, 5000);
     }
   };
 
-  /*const handleTitleChange = event => {
-    setNewTitle(event.target.value)
-  }
-  const handleAuthorChange = event => {
-    setNewAuthor(event.target.value)
-  }
-
-  const handleUrlChange = event => {
-    setNewUrl(event.target.value)
-  }*/
-
   const handleLogout = () => {
-    localStorage.removeItem("loggedBlogappUser");
+    removePersistentUser();
     setUser(null);
     window.location.reload();
   };
 
   const loginForm = () => (
-    <form onSubmit={handleLogin}>
-      <div>
-        <label>
+    <Box
+      component="form"
+      onSubmit={handleLogin}
+      sx={{ display: "flex", flexDirection: "column", gap: 2, width: 250 }}
+    >
+      <FormControl fullWidth>
+        <FormLabel sx={{ mb: 1, fontWeight: 400 }}>
           username
-          <input
-            type="text"
-            value={username}
-            onChange={({ target }) => setUsername(target.value)}
-          />
-        </label>
-      </div>
-      <div>
-        <label>
+          <TextField {...username.inputProps} />
+        </FormLabel>
+      </FormControl>
+
+      <FormControl fullWidth>
+        <FormLabel sx={{ mb: 1, fontWeight: 400 }}>
           password
-          <input
-            type="password"
-            value={password}
-            onChange={({ target }) => setPassword(target.value)}
-          />
-        </label>
-      </div>
-      <button type="submit">login</button>
-    </form>
+          <TextField {...password.inputProps} />
+        </FormLabel>
+      </FormControl>
+      <Button type="submit">login</Button>
+    </Box>
   );
 
-  const blogForm = () => (
-    <Togglable buttonLabel="create new blog" ref={blogFormRef}>
-      <BlogForm createBlog={addBlog} />
-    </Togglable>
-  );
+  const blogForm = () => <BlogForm user={user} createBlog={addBlog} />;
   return (
-    <Routes>
-      <Route
-        path="/"
-        element={
-          <div>
-            <Menu />
-            <ErrorBoundary>
-              <Notification message={notificationMessage} />
-
-              {!user && loginForm()}
-              {user && (
+    <Container>
+      <>
+        <Menu user={user} handleLogout={handleLogout} />
+        <ErrorBoundary>
+          <Routes>
+            <Route
+              path="/users"
+              element={
                 <div>
-                  <p>
-                    {user.name} logged in{" "}
-                    <button onClick={handleLogout}>logout</button>
-                  </p>
-                  {blogForm()}
-                </div>
-              )}
-              {user && (
-                <div>
-                  {blogs.map((blog) => (
-                    <Blog
-                      key={blog.id}
-                      blog={blog}
-                      updateBlog={updateBlog}
-                      deleteBlog={deleteBlog}
-                      user={user}
-                    />
-                  ))}
-                </div>
-              )}
-            </ErrorBoundary>
-          </div>
-        }
-      />
+                  <h2>Users</h2>
 
-      <Route
-        path="*"
-        element={
-          <div>
-            <Menu />
-            <NotFoundError />
-          </div>
-        }
-      />
-    </Routes>
+                  {user && (
+                    <TableContainer component={Paper}>
+                      <Table>
+                        <TableHead>
+                          <TableRow>
+                            <TableCell>Name</TableCell>
+                            <TableCell>Username</TableCell>
+                            <TableCell>Blogs created</TableCell>
+                          </TableRow>
+                        </TableHead>
+                        <TableBody>
+                          {allUsers.map((u) => (
+                            <TableRow key={u.id}>
+                              <TableCell>
+                                <Link to={`/users/${u.id}`}>{u.name}</Link>
+                              </TableCell>
+                              <TableCell>{u.username}</TableCell>
+                              <TableCell>{u.blogs?.length || 0}</TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </TableContainer>
+                  )}
+                </div>
+              }
+            />
+            <Route path="/create" element={blogForm()} />
+            <Route
+              path="/"
+              element={
+                <div>
+                  {!user && loginForm()}
+                  {user && (
+                    <ul>
+                      {blogs.map((blog) => (
+                        <li key={blog.id}>
+                          <Link to={`/blogs/${blog.id}`}>
+                            {blog.title} {blog.author}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              }
+            />
+            <Route
+              path="/blogs/:id"
+              element={
+                blog ? (
+                  <SingleBlog
+                    key={blog.id}
+                    blog={blog}
+                    updateBlog={updateBlog}
+                    deleteBlog={deleteBlog}
+                    commentBlog={commentBlog}
+                    user={user}
+                  />
+                ) : (
+                  <div>No blog found</div>
+                )
+              }
+            />
+            <Route
+              path="/users/:id"
+              element={
+                blogUser ? (
+                  <div>
+                    <h2>{blogUser.name}</h2>
+                    <h3>added blogs</h3>
+                    <ul>
+                      {blogUser.blogs.map((blog) => (
+                        <li key={blog.id}>{blog.title}</li>
+                      ))}
+                    </ul>
+                  </div>
+                ) : (
+                  <div>No user found</div>
+                )
+              }
+            />
+            <Route
+              path="*"
+              element={
+                <div>
+                  <NotFoundError />
+                </div>
+              }
+            />
+          </Routes>
+        </ErrorBoundary>
+      </>
+    </Container>
   );
 };
 

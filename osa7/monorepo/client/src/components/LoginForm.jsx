@@ -1,3 +1,4 @@
+import { TextField, Button } from "@mui/material";
 const LoginForm = ({
   handleSubmit,
   handleUsernameChange,
@@ -13,7 +14,7 @@ const LoginForm = ({
         <div>
           <label>
             username
-            <input
+            <TextField
               type="text"
               value={username}
               onChange={handleUsernameChange}

@@ -1,18 +1,23 @@
 import axios from "axios";
-const baseUrl = "/api/blogs";
+const baseUrl = "/api/users";
 
-let token = null;
+/*let token = null;
 
 const setToken = (newToken) => {
   token = `Bearer ${newToken}`;
-};
+};*/
 
 const getAll = () => {
   const request = axios.get(baseUrl);
   return request.then((response) => response.data);
 };
 
-const create = async (newObject) => {
+export const getUser = async (id) => {
+  const response = await axios.get(`${baseUrl}/${id}`);
+  return response.data;
+};
+
+/*const create = async (newObject) => {
   const config = {
     headers: { Authorization: token },
   };
@@ -40,19 +45,6 @@ const update = async (blog) => {
   return response.data;
 };
 
-export const addComment = async (id, comment) => {
-  const config = {
-    headers: { Authorization: token },
-  };
-
-  const response = await axios.post(
-    `${baseUrl}/${id}/comments`,
-    { comment },
-    config,
-  );
-  return response.data;
-};
-
 const remove = async (blog) => {
   const config = {
     headers: { Authorization: token },
@@ -61,12 +53,13 @@ const remove = async (blog) => {
   const response = await axios.delete(`${baseUrl}/${blog.id}`, config);
   return response.data;
 };
+*/
 
 export default {
-  addComment,
   getAll,
-  create,
-  update,
-  remove,
-  setToken,
+  getUser,
+  //create,
+  //update,
+  //remove,
+  //setToken,
 };
